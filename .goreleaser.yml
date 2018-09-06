@@ -17,6 +17,7 @@ builds:
 
 dockers:
   - image: eu.gcr.io/gc-containers/gocardless/pgbouncer_exporter
+    dockerfile: Dockerfile.goreleaser
     tag_templates:
       - "{{ .Tag }}"
       - latest
