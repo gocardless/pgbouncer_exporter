@@ -147,5 +147,5 @@
 			"revisionTime": "2017-12-17T18:08:21Z"
 		}
 	],
-	"rootPath": "github.com/stanhu/pgbouncer_exporter"
+	"rootPath": "github.com/gocardless/pgbouncer_exporter"
 }

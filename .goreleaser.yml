@@ -1,0 +1,23 @@
+# View goreleaser docs for configuration settings
+# https://goreleaser.com
+
+---
+builds:
+  - binary: pgbouncer_exporter
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+    ldflags: >
+      -a
+      -installsuffix cgo
+    env:
+      - CGO_ENABLED=0
+
+dockers:
+  - image: eu.gcr.io/gc-containers/gocardless/pgbouncer_exporter
+    dockerfile: Dockerfile.goreleaser
+    tag_templates:
+      - "{{ .Tag }}"
+      - latest

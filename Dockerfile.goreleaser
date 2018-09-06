@@ -1,0 +1,9 @@
+FROM alpine:3.8
+
+COPY pgbouncer_exporter /pgbouncer_exporter
+
+# Run as postgres user so that socket-based admin console connections work without supplying a password:
+# https://pgbouncer.github.io/usage.html#admin-console
+USER postgres
+EXPOSE 9127
+ENTRYPOINT [ "/pgbouncer_exporter" ]

@@ -1,7 +1,7 @@
 go:
     cgo: true
 repository:
-    path: github.com/stanhu/pgbouncer_exporter
+    path: github.com/gocardless/pgbouncer_exporter
 build:
     flags: -a -tags 'netgo static_build'
     ldflags: |
