@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/pgtype"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/version"
@@ -42,8 +44,38 @@ func main() {
 		os.Exit(0)
 	}
 
-	connectionString := *connectionStringPointer
-	exporter := NewExporter(connectionString, namespace)
+	userCfg, err := pgx.ParseConnectionString(*connectionStringPointer)
+	if err != nil {
+		panic(err)
+	}
+
+	envCfg, err := pgx.ParseEnvLibpq()
+	if err != nil {
+		panic(err)
+	}
+
+	cfg := pgx.ConnConfig{
+		RuntimeParams: map[string]string{"client_encoding": "UTF8"},
+		// We need to use SimpleProtocol in order to communicate with PgBouncer
+		PreferSimpleProtocol: true,
+		CustomConnInfo: func(_ *pgx.Conn) (*pgtype.ConnInfo, error) {
+			connInfo := pgtype.NewConnInfo()
+			connInfo.InitializeDataTypes(map[string]pgtype.OID{
+				"int4":    pgtype.Int4OID,
+				"name":    pgtype.NameOID,
+				"oid":     pgtype.OIDOID,
+				"text":    pgtype.TextOID,
+				"varchar": pgtype.VarcharOID,
+			})
+
+			return connInfo, nil
+		},
+	}
+
+	cfg = cfg.Merge(envCfg)
+	cfg = cfg.Merge(userCfg)
+
+	exporter := NewExporter(cfg, namespace)
 	prometheus.MustRegister(exporter)
 
 	log.Infoln("Starting pgbouncer exporter version: ", version.Info())
