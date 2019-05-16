@@ -9,7 +9,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/stdlib"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/log"
 )
@@ -158,7 +159,7 @@ func queryNamespaceMapping(ch chan<- prometheus.Metric, db *sql.DB, namespace st
 }
 
 func getDB(conn string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", conn)
+	db, err := sql.Open("pgx", conn)
 	if err != nil {
 		return nil, err
 	}
