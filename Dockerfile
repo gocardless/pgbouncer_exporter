@@ -7,6 +7,7 @@ RUN PREFIX=/go/bin/ make
 
 FROM alpine:3.8
 
+RUN apk add --no-cache curl
 WORKDIR /app
 COPY --from=build-env /go/bin/pgbouncer_exporter /
 
