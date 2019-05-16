@@ -9,7 +9,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/stdlib"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/log"
 )
@@ -42,9 +44,9 @@ var (
 	}
 )
 
-func NewExporter(connectionString string, namespace string) *Exporter {
+func NewExporter(cfg pgx.ConnConfig, namespace string) *Exporter {
 
-	db, err := getDB(connectionString)
+	db, err := getDB(cfg)
 
 	if err != nil {
 		log.Fatal(err)
@@ -157,15 +159,8 @@ func queryNamespaceMapping(ch chan<- prometheus.Metric, db *sql.DB, namespace st
 	return nonfatalErrors, nil
 }
 
-func getDB(conn string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", conn)
-	if err != nil {
-		return nil, err
-	}
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
+func getDB(cfg pgx.ConnConfig) (*sql.DB, error) {
+	db := stdlib.OpenDB(cfg)
 
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
