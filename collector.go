@@ -301,7 +301,6 @@ func (e *Exporter) scrape(ch chan<- prometheus.Metric) {
 		e.up.Set(0)
 		e.error.Set(1)
 		log.Error(errMap)
-		return
 	}
 }
 
