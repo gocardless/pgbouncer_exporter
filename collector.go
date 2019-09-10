@@ -292,13 +292,6 @@ func (e *Exporter) scrape(ch chan<- prometheus.Metric) {
 	e.error.Set(0)
 	e.totalScrapes.Inc()
 
-	if err := e.db.Ping(); err != nil {
-		log.Errorf("Backend is down, failed to connect: %s", err)
-		e.error.Set(1)
-		e.up.Set(0)
-		return
-	}
-
 	e.up.Set(1)
 
 	e.mutex.RLock()
@@ -306,8 +299,10 @@ func (e *Exporter) scrape(ch chan<- prometheus.Metric) {
 
 	errMap := queryNamespaceMappings(ch, e.db, e.metricMap)
 	if len(errMap) > 0 {
-		log.Fatal(errMap)
 		e.error.Set(1)
+		e.up.Set(0)
+		log.Error(errMap)
+		return
 	}
 }
 
