@@ -289,18 +289,17 @@ func (e *Exporter) scrape(ch chan<- prometheus.Metric) {
 
 	log.Info("Starting scrape")
 
+	e.up.Set(1)
 	e.error.Set(0)
 	e.totalScrapes.Inc()
-
-	e.up.Set(1)
 
 	e.mutex.RLock()
 	defer e.mutex.RUnlock()
 
 	errMap := queryNamespaceMappings(ch, e.db, e.metricMap)
 	if len(errMap) > 0 {
-		e.error.Set(1)
 		e.up.Set(0)
+		e.error.Set(1)
 		log.Error(errMap)
 		return
 	}
