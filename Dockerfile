@@ -5,7 +5,7 @@ ADD . /go/src/github.com/gocardless/pgbouncer_exporter
 WORKDIR /go/src/github.com/gocardless/pgbouncer_exporter
 RUN PREFIX=/go/bin/ make
 
-FROM alpine:3.8
+FROM alpine:3.11.3
 
 RUN apk add --no-cache curl
 WORKDIR /app

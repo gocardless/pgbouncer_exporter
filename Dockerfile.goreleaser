@@ -1,4 +1,4 @@
-FROM alpine:3.8
+FROM alpine:3.11.3
 
 COPY pgbouncer_exporter /pgbouncer_exporter
 
