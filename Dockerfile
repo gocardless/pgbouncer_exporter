@@ -1,4 +1,4 @@
-FROM golang:1.12.9-alpine AS build-env
+FROM golang:1.14.3-alpine AS build-env
 
 RUN apk add --no-cache make git gcc musl-dev
 ADD . /go/src/github.com/gocardless/pgbouncer_exporter
